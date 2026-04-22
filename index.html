@@ -3,117 +3,189 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Telegram Channel Redirect</title>
+  <title>Premium Secure Redirect</title>
+  
   <style>
+    /* Premium Styling */
+    :root {
+      --primary-color: #00f2fe;
+      --secondary-color: #4facfe;
+      --bg-gradient: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+    }
+
     * {
       box-sizing: border-box;
+      -webkit-user-select: none; /* Disable Copy */
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
+
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-gradient);
       height: 100vh;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       color: white;
-      text-align: center;
+      overflow: hidden;
     }
-    .container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 2rem;
+
+    /* Anti-Screenshot Overlay (Attempts to block screen captures in some browsers) */
+    @media print {
+      body { display: none; }
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 3rem;
       width: 90%;
-      max-width: 400px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      max-width: 450px;
+      text-align: center;
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
+      position: relative;
     }
-    .icon {
-      font-size: 50px;
-      margin-bottom: 1rem;
+
+    .main-icon {
+      font-size: 60px;
+      filter: drop-shadow(0 0 10px var(--primary-color));
+      margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
     }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
     h1 {
-      font-size: 24px;
-      margin-bottom: 0.5rem;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #fff, #4facfe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    p {
-      margin-bottom: 1rem;
-    }
-    .box, .note {
-      background: rgba(0, 0, 0, 0.2);
-      padding: 1rem;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-      font-size: 15px;
-    }
-    .box {
-      border-left: 4px solid red;
-    }
-    .note {
-      border-left: 4px solid cyan;
-    }
-    a {
-      color: #7cffd6;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .admin {
+
+    .status-text {
       font-size: 14px;
-      opacity: 0.8;
-      margin-bottom: 1rem;
+      opacity: 0.7;
+      margin-bottom: 25px;
     }
-    .timer {
-      font-weight: bold;
+
+    .timer-box {
       font-size: 18px;
+      margin: 20px 0;
     }
-    .timer span {
-      font-size: 22px;
-      background: red;
-      padding: 0.3rem 0.6rem;
-      border-radius: 50%;
-      box-shadow: 0 0 10px red;
-      color: white;
+
+    #timer-count {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--primary-color);
+      text-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
+    }
+
+    .link-box {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 15px;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      margin-top: 20px;
+    }
+
+    .link-box a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+      pointer-events: auto; /* Re-enable click for link only */
+    }
+
+    .footer-counter {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0.6;
+      transition: 0.3s;
+    }
+    
+    .footer-counter:hover { opacity: 1; }
+
+    /* Security: Prevent Right Click and dragging */
+    .no-interaction {
+      pointer-events: none;
     }
   </style>
+
   <script>
-    let countdown = 0.1;
-    function updateTimer() {
-      const timerSpan = document.getElementById("timer-count");
-      timerSpan.textContent = countdown;
-      if (countdown === 0) {
-        window.location.href = "https://t.me/+SHnGrp1qjEAxMDY1";
-      } else {
-        countdown--;
-        setTimeout(updateTimer, 1000);
-      }
+    // --- SETTINGS ---
+    let countdown = 5; // <--- Tumi iccha moto (0.1 theke 9999) change korte parbe
+    const redirectUrl = "https://t.me/+SHnGrp1qjEAxMDY1";
+
+    function startTimer() {
+      const timerDisplay = document.getElementById("timer-count");
+      
+      const interval = setInterval(() => {
+        if (countdown <= 0) {
+          clearInterval(interval);
+          window.location.href = redirectUrl;
+        } else {
+          timerDisplay.textContent = countdown.toFixed(1); // Decimals allow for 0.1 increments
+          countdown = (parseFloat(countdown) - 0.1).toFixed(1);
+        }
+      }, 100); // Runs every 100ms for smooth 0.1s updates
     }
-    window.onload = updateTimer;
+
+    // Security: Block Right Click
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // Security: Block F12 and Inspect shortcuts
+    document.onkeydown = function(e) {
+      if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
+        return false;
+      }
+    };
+
+    window.onload = startTimer;
   </script>
 </head>
-<body>
-  <div class="container">
-    <div class="icon">🛫</div>
-    <h1>Telegram Channel Redirect</h1>
-    <p>You're being redirected to one of our Telegram channels</p>
+<body ondragstart="return false" onselectstart="return false">
 
-    <div class="box">
-      If you are not redirected automatically, <a href="https://t.me/+SHnGrp1qjEAxMDY1">click here to continue</a>.
+  <div class="glass-card">
+    <div class="main-icon">🛡️</div>
+    <h1 class="no-interaction">Secure Gateway</h1>
+    <p class="status-text no-interaction">Verifying your connection to Telegram...</p>
+
+    <div class="timer-box">
+      Redirecting in <br>
+      <span id="timer-count">5.0</span> <small>seconds</small>
     </div>
 
-    <div class="note">
-      <strong>Note:</strong> If the invite link shows as expired, please refresh the page.
+    <div class="link-box">
+      Link not working? <br>
+      <a href="https://t.me/+SHnGrp1qjEAxMDY1">Click Here to Join</a>
     </div>
 
-    <div class="admin">
-      Need help? Contact admin: <br />
-      <a href="https://t.me/Luxepremiumrobot" target="_blank">@Luxepremiumrobot</a>
-    </div>
-
-    <div class="timer">
-      Redirecting in <span id="timer-count">5</span> seconds
+    <div style="margin-top: 20px; font-size: 12px; opacity: 0.5;">
+      Admin Support: <a href="https://t.me/Luxepremiumrobot" style="color: white; text-decoration: none;">@Luxepremiumrobot</a>
     </div>
   </div>
+
+  <div class="footer-counter">
+    <a href="https://www.hitwebcounter.com/character-counter" target="_blank" style="pointer-events: auto;">
+      <img src="https://hitwebcounter.com/counter/counter.php?page=21491616&style=0010&nbdigits=6&type=ip&initCount=0" title="Total Character" alt="Total Character" style="border:0;" />
+    </a>
+  </div>
+
 </body>
 </html>
