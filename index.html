@@ -6,25 +6,26 @@
   <title>Premium Secure Redirect</title>
   
   <style>
-    /* Premium Styling */
     :root {
       --primary-color: #00f2fe;
       --secondary-color: #4facfe;
-      --bg-gradient: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+      --bg-gradient: radial-gradient(circle, #24243e 0%, #0f0c29 100%);
     }
 
+    /* Security: No selection, No copy, No long press */
     * {
       box-sizing: border-box;
-      -webkit-user-select: none; /* Disable Copy */
+      -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
+      -webkit-touch-callout: none; /* iOS disable long press save image */
     }
 
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg-gradient);
       height: 100vh;
       display: flex;
@@ -35,140 +36,114 @@
       overflow: hidden;
     }
 
-    /* Anti-Screenshot Overlay (Attempts to block screen captures in some browsers) */
-    @media print {
-      body { display: none; }
-    }
+    /* Anti-Screenshot Attempt */
+    @media print { body { display: none; } }
 
     .glass-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 30px;
-      padding: 3rem;
+      border-radius: 25px;
+      padding: 40px 20px;
       width: 90%;
-      max-width: 450px;
+      max-width: 400px;
       text-align: center;
-      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
-      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     }
 
-    .main-icon {
-      font-size: 60px;
-      filter: drop-shadow(0 0 10px var(--primary-color));
+    .shield-icon {
+      width: 80px;
+      height: auto;
       margin-bottom: 20px;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      filter: drop-shadow(0 0 10px var(--primary-color));
     }
 
     h1 {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: 1px;
+      font-size: 28px;
       margin-bottom: 10px;
-      background: linear-gradient(to right, #fff, #4facfe);
+      background: linear-gradient(to bottom, #fff, #4facfe);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .status-text {
-      font-size: 14px;
-      opacity: 0.7;
-      margin-bottom: 25px;
-    }
-
-    .timer-box {
-      font-size: 18px;
-      margin: 20px 0;
-    }
-
-    #timer-count {
-      font-size: 32px;
+    .timer-display {
+      font-size: 45px;
       font-weight: bold;
       color: var(--primary-color);
-      text-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
+      margin: 20px 0;
+      text-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
     }
 
     .link-box {
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.05);
       padding: 15px;
       border-radius: 15px;
       border: 1px dashed rgba(255, 255, 255, 0.2);
-      margin-top: 20px;
+      margin-top: 25px;
     }
 
     .link-box a {
       color: var(--primary-color);
       text-decoration: none;
-      font-weight: 600;
-      pointer-events: auto; /* Re-enable click for link only */
+      font-weight: bold;
+      pointer-events: auto !important; /* Only this link is clickable */
     }
 
+    /* Hit Counter - Non Clickable CSS */
     .footer-counter {
       position: fixed;
-      bottom: 20px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0.6;
-      transition: 0.3s;
+      bottom: 25px;
+      pointer-events: none; /* Pure block for any clicks */
+      user-select: none;
+      filter: brightness(0.8) cyan-shadow(0 0 5px cyan);
     }
-    
-    .footer-counter:hover { opacity: 1; }
 
-    /* Security: Prevent Right Click and dragging */
-    .no-interaction {
-      pointer-events: none;
+    .footer-counter a, .footer-counter img {
+      pointer-events: none !important;
+      cursor: default !important;
     }
   </style>
 
   <script>
     // --- SETTINGS ---
-    let countdown = 5; // <--- Tumi iccha moto (0.1 theke 9999) change korte parbe
-    const redirectUrl = "https://t.me/+SHnGrp1qjEAxMDY1";
+    let timeRemaining = 5.0; // Tumi ekhane 0.1 theke 9999 jekono value dite paro
+    const targetUrl = "https://t.me/+SHnGrp1qjEAxMDY1";
 
-    function startTimer() {
-      const timerDisplay = document.getElementById("timer-count");
+    function initRedirect() {
+      const display = document.getElementById("timer-count");
       
-      const interval = setInterval(() => {
-        if (countdown <= 0) {
-          clearInterval(interval);
-          window.location.href = redirectUrl;
+      const timer = setInterval(() => {
+        if (timeRemaining <= 0) {
+          clearInterval(timer);
+          window.location.href = targetUrl;
         } else {
-          timerDisplay.textContent = countdown.toFixed(1); // Decimals allow for 0.1 increments
-          countdown = (parseFloat(countdown) - 0.1).toFixed(1);
+          display.textContent = timeRemaining.toFixed(1);
+          timeRemaining -= 0.1;
         }
-      }, 100); // Runs every 100ms for smooth 0.1s updates
+      }, 100);
     }
 
-    // Security: Block Right Click
-    document.addEventListener('contextmenu', event => event.preventDefault());
-
-    // Security: Block F12 and Inspect shortcuts
+    // Security: Block Right Click, F12, Ctrl+U
+    document.addEventListener('contextmenu', e => e.preventDefault());
     document.onkeydown = function(e) {
-      if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
+      if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) {
         return false;
       }
     };
 
-    window.onload = startTimer;
+    window.onload = initRedirect;
   </script>
 </head>
 <body ondragstart="return false" onselectstart="return false">
 
   <div class="glass-card">
-    <div class="main-icon">🛡️</div>
-    <h1 class="no-interaction">Secure Gateway</h1>
-    <p class="status-text no-interaction">Verifying your connection to Telegram...</p>
+    <img src="https://img.icons8.com/fluency/96/shield.png" class="shield-icon" alt="Security Shield">
+    
+    <h1>Secure Gateway</h1>
+    <p style="opacity: 0.6; font-size: 14px;">Verifying connection, please wait...</p>
 
-    <div class="timer-box">
-      Redirecting in <br>
-      <span id="timer-count">5.0</span> <small>seconds</small>
+    <div class="timer-display">
+      <span id="timer-count">5.0</span><span style="font-size: 18px; margin-left: 5px;">s</span>
     </div>
 
     <div class="link-box">
@@ -176,14 +151,14 @@
       <a href="https://t.me/+SHnGrp1qjEAxMDY1">Click Here to Join</a>
     </div>
 
-    <div style="margin-top: 20px; font-size: 12px; opacity: 0.5;">
-      Admin Support: <a href="https://t.me/Luxepremiumrobot" style="color: white; text-decoration: none;">@Luxepremiumrobot</a>
-    </div>
+    <p style="margin-top: 20px; font-size: 12px; opacity: 0.4;">
+      Admin Support: @Luxepremiumrobot
+    </p>
   </div>
 
   <div class="footer-counter">
-    <a href="https://www.hitwebcounter.com/character-counter" target="_blank" style="pointer-events: auto;">
-      <img src="https://hitwebcounter.com/counter/counter.php?page=21491616&style=0010&nbdigits=6&type=ip&initCount=0" title="Total Character" alt="Total Character" style="border:0;" />
+    <a href="#" onclick="return false;">
+      <img src="https://hitwebcounter.com/counter/counter.php?page=21491616&style=0010&nbdigits=6&type=ip&initCount=0" title="Counter" alt="Counter" style="border:0;" />
     </a>
   </div>
 
